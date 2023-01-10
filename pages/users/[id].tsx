@@ -17,9 +17,7 @@ export default function UserDetail({ user }: UserDetailProps) {
   return (
     <Layout pageTitle={id as string}>
       <div>UserDetail {id}</div>
-      <div>{user.name}</div>
       <div>{user.email}</div>
-      <div>{user.phone}</div>
     </Layout>
   );
 }
@@ -30,8 +28,9 @@ type UserPaths = {
   };
 }[];
 export const getStaticPaths: GetStaticPaths = async () => {
-  const res = await fetch('https://jsonplaceholder.typicode.com/users');
-  const users: User[] = await res.json();
+  const res = await fetch('http://localhost:3000/api/users');
+  const { payload } = await res.json();
+  const users: User[] = payload;
   const paths: UserPaths = users.map((user) => ({
     params: { id: `${user.id}` },
   }));
@@ -42,10 +41,9 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const res = await fetch(
-    `https://jsonplaceholder.typicode.com/users/${params?.id}`
-  );
-  const user: User = await res.json();
+  const res = await fetch(`http://localhost:3000/api/users/${params?.id}`);
+  const { payload } = await res.json();
+  const user: User = payload;
 
   if (JSON.stringify(user) === '{}') {
     return {
@@ -56,5 +54,6 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     props: {
       user,
     },
+    revalidate: 10,
   };
 };

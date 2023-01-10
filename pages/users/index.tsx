@@ -7,13 +7,9 @@ interface UsersProps {
 }
 
 export type User = {
-  id: number;
-  name: string;
+  id: string;
   email: string;
-  address: object;
-  phone: string;
-  website: string;
-  company: object;
+  password: string;
 };
 
 export default function Users({ users }: UsersProps) {
@@ -28,7 +24,7 @@ export default function Users({ users }: UsersProps) {
             onClick={() => router.push(`/users/${user.id}`)}
             className="shadow-md bg-slate-200 cursor-pointer p-3 m-2"
           >
-            <p>{user.name}</p>
+            <p>{user.email}</p>
           </div>
         ))}
       </div>
@@ -37,11 +33,16 @@ export default function Users({ users }: UsersProps) {
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  const res = await fetch('https://jsonplaceholder.typicode.com/users');
-  const users: User[] = await res.json();
+  const res = await fetch('http://localhost:3000/api/users');
+  const { success, payload } = await res.json();
+  if (!success) {
+    return {
+      notFound: true,
+    };
+  }
   return {
     props: {
-      users,
+      users: payload,
     },
     revalidate: 10,
   };
