@@ -1,4 +1,4 @@
-import { createResponse } from '../../../utils/api';
+import api from '../../../utils/api';
 import { prisma } from '../../../utils/prisma';
 import { NextApiRequest, NextApiResponse } from 'next';
 
@@ -17,7 +17,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
         if (user) {
           res.status(200).json(
-            createResponse({
+            api.createResponse({
               success: true,
               payload: user,
               message: 'success get user',
@@ -25,7 +25,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           );
         } else {
           res.status(400).json(
-            createResponse({
+            api.createResponse({
               success: false,
               message: 'user not found',
             })
@@ -34,7 +34,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       } catch (error) {
         res
           .status(500)
-          .json(createResponse({ success: false, message: 'failed get user' }));
+          .json(
+            api.createResponse({ success: false, message: 'failed get user' })
+          );
       }
       break;
   }

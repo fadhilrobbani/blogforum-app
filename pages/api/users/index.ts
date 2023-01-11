@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '../../../utils/prisma';
-import { createResponse } from '../../../utils/api';
+import api from '../../../utils/api';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const requestMethod = req.method;
@@ -9,20 +9,20 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     case 'GET':
       try {
         const users = await prisma.users.findMany();
-
         res.status(200).json(
-          createResponse({
+          api.createResponse({
             success: true,
             payload: users,
             message: 'OK',
           })
         );
       } catch (error) {
-        const json = createResponse({
-          success: false,
-          message: 'failed get users',
-        });
-        res.status(400).json(json);
+        res.status(400).json(
+          api.createResponse({
+            success: false,
+            message: 'failed get users',
+          })
+        );
       }
       break;
 
@@ -37,17 +37,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         });
 
         res.status(200).json(
-          createResponse({
+          api.createResponse({
             success: true,
             message: 'success create new user',
           })
         );
       } catch (error) {
-        res
-          .status(400)
-          .json(
-            createResponse({ success: false, message: 'failed create user' })
-          );
+        res.status(400).json(
+          api.createResponse({
+            success: false,
+            message: 'failed create user',
+          })
+        );
       }
       break;
 
@@ -59,18 +60,21 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             email: req.body.email,
           },
         });
-        res
-          .status(200)
-          .json(
-            createResponse({ success: true, message: 'success delete user' })
-          );
+        res.status(200).json(
+          api.createResponse({
+            success: true,
+            message: 'success delete user',
+          })
+        );
       } catch (error) {
-        res
-          .status(400)
-          .json(
-            createResponse({ success: false, message: 'failed delete user' })
-          );
+        res.status(400).json(
+          api.createResponse({
+            success: false,
+            message: 'failed delete user',
+          })
+        );
       }
+      break;
   }
 };
 

@@ -1,6 +1,7 @@
 import { GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import Layout from '../../components/Layout';
+import api from '../../utils/api';
 
 interface UsersProps {
   users: User[];
@@ -33,16 +34,18 @@ export default function Users({ users }: UsersProps) {
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  const res = await fetch('http://localhost:3000/api/users');
-  const { success, payload } = await res.json();
-  if (!success) {
+  const users = await api.getAllUsers();
+  if (!users) {
     return {
-      notFound: true,
+      redirect: {
+        permanent: false,
+        destination: '/',
+      },
     };
   }
   return {
     props: {
-      users: payload,
+      users,
     },
     revalidate: 10,
   };
