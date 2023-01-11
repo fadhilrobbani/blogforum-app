@@ -22,9 +22,19 @@ const api = (() => {
     }
     return payload;
   };
+
+  const getUserById = async (id: string) => {
+    const res = await fetch(`${baseURL}/api/users/${id}`);
+    const { success, payload } = await res.json();
+    if (!success) {
+      return null;
+    }
+    return payload;
+  };
   return {
     createResponse,
     getAllUsers,
+    getUserById,
   };
 })();
 

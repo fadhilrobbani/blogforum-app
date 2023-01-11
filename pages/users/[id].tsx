@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { User } from '.';
 import Layout from '../../components/Layout';
 import Spinner from '../../components/Spinner';
-import { baseURL } from '../../utils/base-url';
+import api from '../../utils/api';
 
 interface UserDetailProps {
   user: User;
@@ -29,9 +29,7 @@ type UserPaths = {
   };
 }[];
 export const getStaticPaths: GetStaticPaths = async () => {
-  const res = await fetch(`${baseURL}/api/users`);
-  const { payload } = await res.json();
-  const users: User[] = payload;
+  const users: User[] = await api.getAllUsers();
   const paths: UserPaths = users.map((user) => ({
     params: { id: `${user.id}` },
   }));
@@ -42,11 +40,9 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const res = await fetch(`${baseURL}/api/users/${params?.id}`);
-  const { success, payload } = await res.json();
-  const user: User = payload;
+  const user: User = await api.getUserById(params?.id as string);
 
-  if (!success) {
+  if (!user) {
     return {
       notFound: true,
     };
